@@ -8,51 +8,45 @@ import plotly.express as px
 url = "https://media.githubusercontent.com/media/sunshineluyao/icp-nns-db/main/data/proposals_no_empty.csv"
 df = pd.read_csv(url)
 
-# Prepare data for the line plot
-action_nns_function_counts = df['action_nns_function'].value_counts().reset_index()
-action_nns_function_counts.columns = ['Action NNS Function', 'Count']
-
 # Initialize the Dash app
 app = dash.Dash(__name__)
 server = app.server
 
-# Create a line plot using Plotly Express with a log-scale y-axis
-fig = px.line(action_nns_function_counts, x='Action NNS Function', y='Count', title='Distribution of Action NNS Functions', markers=True, line_shape='linear')
-fig.update_traces(line_color='green')  # Set the line color to green
+# Create a bar plot using Plotly Express with a log-scale y-axis
+fig = px.bar(df['action'].value_counts(), x=df['action'].value_counts().index, y=df['action'].value_counts().values, labels={'x': 'Action', 'y': 'Count'}, title='Distribution of Actions')
 fig.update_yaxes(type="log")  # Set y-axis to logarithmic scale
 
 # Define the layout of the dashboard
 app.layout = html.Div([
-    html.H1("Internet Computer Protocol NNS Governance System Dashboard: Action NNS Function"),
+    # Header
+    html.H1("Internet Computer Protocol NNS Governance System Dashboard: Action"),
     
+    # Paragraph with italicized notes
     html.P([
-        "Choose the proposal status to view the distributions of proposal action nns function. ",
-        html.I("Notes: Action NNS Function is the specific NNS function targeted by the proposal; Status is the current standing of the proposal, be it pending, accepted, negated, or unsuccessful.")
+        "Choose the proposal status to view the distributions of proposal actions. ",
+        html.I("Notes: Action is the type of action the proposal seeks, such as propose, reject, or execute; Status is the current standing of the proposal, be it pending, accepted, negated, or unsuccessful.")
     ]),
 
+    # Dropdown for status selection
     dcc.Dropdown(
         id='status-dropdown',
-        options=[
-            {'label': status, 'value': status} for status in df['status'].unique()
-        ],
-        value=df['status'].unique()[0],
+        options=[{'label': status, 'value': status} for status in df['status'].unique()],
+        value=df['status'].unique()[0],  # Set default value to the first unique status
         multi=False
     ),
-    dcc.Graph(id='bar-plot', figure=fig)  # Set the initial figure to the line plot
+
+    # Graph for displaying the data
+    dcc.Graph(id='bar-plot')
 ])
 
-# Create a callback to update the plot based on the selected status
+# Create a callback to update the bar plot based on the selected status
 @app.callback(
     Output('bar-plot', 'figure'),
     Input('status-dropdown', 'value')
 )
 def update_bar_plot(selected_status):
     filtered_df = df[df['status'] == selected_status]
-    action_nns_function_counts_filtered = filtered_df['action_nns_function'].value_counts().reset_index()
-    action_nns_function_counts_filtered.columns = ['Action NNS Function', 'Count']
-
-    fig = px.line(action_nns_function_counts_filtered, x='Action NNS Function', y='Count', title=f'Distribution of Action NNS Functions for {selected_status} Proposals', markers=True, line_shape='linear')
-    fig.update_traces(line_color='green')  # Set the line color to green
+    fig = px.bar(filtered_df['action'].value_counts(), x=filtered_df['action'].value_counts().index,y=filtered_df['action'].value_counts().values, labels={'x': 'Action', 'y': 'Count'},title=f'Distribution of Actions for {selected_status} Proposals')
     fig.update_yaxes(type="log")  # Set y-axis to logarithmic scale
     return fig
 
