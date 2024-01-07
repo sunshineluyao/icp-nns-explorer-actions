@@ -20,6 +20,7 @@ df = pd.read_csv(url)
 
 # Initialize the Dash app
 app = dash.Dash(__name__)
+server = app.server
 
 # Create a bar plot using Plotly Express with a log-scale y-axis
 fig = px.bar(df['action'].value_counts(), x=df['action'].value_counts().index, y=df['action'].value_counts().values, labels={'x': 'Action', 'y': 'Count'}, title='Distribution of Actions')
