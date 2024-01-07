@@ -1,4 +1,4 @@
-# README.md for "ICP NNS Governance System Explorer"
+# README.md for "ICP NNS Governance System Explorer: Action NNS Function"
 
 ## Introduction
 
@@ -43,7 +43,7 @@ This repository provides a framework for creating and deploying Dash application
 
 ### Featured Dash Application: ICP NNS Governance System Dashboard
 
-This repository focuses on a Dash application that visualizes the distribution of proposal actions in the ICP NNS Governance System. The application is structured as follows:
+This repository focuses on a Dash application that visualizes the distribution of proposal NNS functions in the ICP NNS Governance System. The application is structured as follows:
 
 - **Data Loading**: The dataset is loaded from a provided CSV URL.
 - **Dash App Initialization**: A Dash app is initialized.
